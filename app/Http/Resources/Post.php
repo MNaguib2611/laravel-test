@@ -16,12 +16,12 @@ class Post extends JsonResource
     {
         // TODO: Refactor.
         return [
-            'id' => $this->id,
-            'user' => $this->user,
-            'title' => $this->title,
-            'content' => $this->content,
-            'status' => $this->status,
-            'comments' => $this->comments,
+            'id'         => $this->id,
+            'user'       => new User($this->user),
+            'title'      => $this->title,
+            'content'    => $this->content,
+            'created_at' =>$this->created_at->diffForHumans(),
+            'comments'   => Comment::collection($this->comments),
         ];
     }
 }

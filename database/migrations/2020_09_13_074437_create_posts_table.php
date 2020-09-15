@@ -3,6 +3,10 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\Post;
+
+
+
 
 class CreatePostsTable extends Migration
 {
@@ -18,7 +22,11 @@ class CreatePostsTable extends Migration
             $table->foreignId('user_id');
             $table->string('title');
             $table->text('content');
-            $table->enum('status', ['approved', 'pending', 'rejected'])->default('pending');
+            $table->enum('status', [
+                                Post::APPROVED,
+                                Post::PENDING,
+                                Post::REJECTED
+                              ])->default(Post::PENDING);
             $table->timestamps();
 
             // TODO: Add the missing.

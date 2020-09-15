@@ -12,6 +12,11 @@ class Comment extends Model
 {
     use HasFactory;
 
+    const APPROVED = 1;
+    const PENDING  = 2;
+    const REJECTED = 3;
+
+
     /**
      * The attributes that are mass assignable.
      *
@@ -48,7 +53,7 @@ class Comment extends Model
      */
     public function approve(): Comment
     {
-        $this->status = 1;
+        $this->status = SELF::APPROVED;
         $this->save();
 
         return $this;
@@ -61,9 +66,18 @@ class Comment extends Model
      */
     public function reject(): Comment
     {
-        $this->status = 3;
+        $this->status = SELF::REJECTED;
         $this->save();
 
         return $this;
     }
+
+
+
+       
+    public static function approvedComments()
+    {
+        return SELF::where("status",SELF::APPROVED);
+    }
+
 }

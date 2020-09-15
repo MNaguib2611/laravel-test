@@ -24,6 +24,10 @@ class DatabaseSeeder extends Seeder
             $post->user_id = $users->random()->id;
             $post->save();
         });
+        $posts = Post::factory(5)->rejected()->make()->each(function (Post $post) use ($users) {
+            $post->user_id = $users->random()->id;
+            $post->save();
+        });
         $comments = Comment::factory(10)->approved()->make()->each(function (Comment $comment) use ($users, $posts) {
             $comment->user_id = $users->random()->id;
             $comment->post_id = $posts->random()->id;

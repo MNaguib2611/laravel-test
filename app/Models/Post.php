@@ -12,6 +12,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Post extends Model
 {
     use HasFactory;
+    const APPROVED = "approved";
+    const PENDING  = "pending";
+    const REJECTED = "rejected";
 
     /**
      * The attributes that are mass assignable.
@@ -67,4 +70,13 @@ class Post extends Model
 
         return $this;
     }
+
+   
+    public static function approvedPosts()
+    {
+        return SELF::where("status",SELF::APPROVED);
+    }
+
+    
+    
 }

@@ -7,56 +7,53 @@ use App\Models\Post;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Validator;
+use App\Http\Requests\PostRequest;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Resources\Json\JsonResource
-     */
-    public function index(): JsonResource
-    {
-        // TODO: Get approved posts only (use best practices).
-        // TODO: Refactor.
-        $posts = Post::all();
 
-        return PostResource::collection($posts); // TODO: Add posts count to response.
+    public function index(): JsonResponse
+    {
+        //only approved posts
+        $posts = PostResource::collection(Post::approvedPosts()->get());       
+
+
+        // TODO: Add posts count to response.
+       return  response()->json([
+            'count' => count($posts), 
+            'posts' => PostResource::collection($posts),
+       ],200);
+
+
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(Request $request): JsonResponse
-    {
-        // TODO: Refactor.
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|max:255',
-            'content' => 'required',
-        ]);
 
-        if ($validator->passes()) {
-            $post = auth()->user()->posts()->create($validator->validated());
+
+
+
+    public function store(PostRequest $request): JsonResponse
+    {
+        //create the (valid) post and attach it to the logged user
+            $post = auth()->user()->posts()->create($request->all());
+            
             // TODO: Perform text moderation, approve/reject the post, send a notification to the user.
+            
+
+
             return response()->json(['message' => 'Success.'], 202);
-        } else {
-            return response()->json(['message' => 'The given data was invalid.', 'errors' => $validator->errors()], 422);
-        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Resources\Json\JsonResource
-     */
-    public function show(Post $post): JsonResource
+
+
+
+
+    public function show(Post $post)
     {
         // TODO: Refactor (N+1).
-        return new PostResource($post);
+        if ($post->status == Post::APPROVED) {
+            return new PostResource($post);
+        }
+        //incase the post hasn't been approved
+        abort(404, "No query results for model [App\\Models\\Post] ".$post->id);
     }
 }
