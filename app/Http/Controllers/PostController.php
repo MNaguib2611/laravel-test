@@ -8,6 +8,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Requests\PostRequest;
+use App\Services\TextModerator;
+use App\Notifications\PostNotification;
 
 class PostController extends Controller
 {
@@ -33,14 +35,22 @@ class PostController extends Controller
 
     public function store(PostRequest $request): JsonResponse
     {
+     
         //create the (valid) post and attach it to the logged user
             $post = auth()->user()->posts()->create($request->all());
             
-            // TODO: Perform text moderation, approve/reject the post, send a notification to the user.
-            
+            // Perform text moderation, approve/reject the post, send a notification to the user.
+            $textmoderator = new TextModerator();            
+            if($textmoderator->check($post->title.$post->content)){
+                $post->approve();
+                auth()->user()->notify(new PostNotification("your post $post->title was approved"));
+            }else{
+                $post->reject();
+                auth()->user()->notify(new PostNotification("your post $post->title was rejected"));
+            }
 
 
-            return response()->json(['message' => 'Success.'], 202);
+            return response()->json(['message' => 'Post created Successfully.'], 202);
     }
 
 

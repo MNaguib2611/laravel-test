@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Http\Requests\CommentRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Resources\Comment as CommentResource;
+use App\Services\TextModerator;
+use App\Notifications\CommentNotification;
 
 
 class CommentController extends Controller
@@ -30,9 +32,17 @@ class CommentController extends Controller
         $comment = auth()->user()->comments()->make($request->all());
         $post = $post->comments()->save($comment);
         // TODO: Perform text moderation, approve/reject the comment, send a notification to the user.
-        return response()->json([
-                            'message' => 'Success.',
-                            'comment' =>new CommentResource($comment)
-                                    ], 202);
+        
+        $textmoderator = new TextModerator();            
+        if($textmoderator->check($comment->content)){
+            $comment->approve();
+            auth()->user()->notify(new CommentNotification("your comment $comment->content was approved"));
+        }else{
+            $comment->reject();
+            auth()->user()->notify(new CommentNotification("your comment $comment->content was rejected"));
+        }
+
+
+        return response()->json(['message' => 'Comment created Successfully.'], 202);
     }
 }
