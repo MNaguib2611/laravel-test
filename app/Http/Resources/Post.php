@@ -17,7 +17,7 @@ class Post extends JsonResource
         // TODO: Refactor.
         return [
             'id'         => $this->id,
-            'user'       => new User($this->user),
+            'user'       => $this->user,
             'title'      => $this->title,
             'content'    => $this->content,
             'created_at' =>$this->created_at->diffForHumans(),

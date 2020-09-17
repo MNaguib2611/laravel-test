@@ -77,7 +77,7 @@ class CommentTest extends TestCase
             'Content-Type' => 'application/json',
             'Authorization' => $token,
         // ])->json('POST', "/api/posts/".$post->id."/comments");
-        ])->json('POST', "/api/posts/41/comments",['content'=>"unitTest comment"]);
+        ])->json('POST', "/api/posts/".$post->id."/comments",['content'=>"unitTest comment"]);
 
         $response4
             ->assertStatus(202);    

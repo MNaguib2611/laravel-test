@@ -21,7 +21,7 @@
 
 
 
-##what was done:-
+## what was finished in this task:-
 - Used JWT fo API-authentication.
 - Only the approved posts & approved comments will be retrievable.(another solution is softDeleting them)
 - Add the posts count & comments count to allposts JSON response(approved only)
