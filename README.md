@@ -30,6 +30,6 @@
 - Unread notifications could be retrieved route api/notifications
 - added test cases to verify everything (usign `composer test` )
 
-
+### PS:There was no constrains on foreign keys in the migrations so I added them in a seperate migrations files
 
 
