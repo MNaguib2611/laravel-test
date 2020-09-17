@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Exceptions\UnsuccessfulTextModerationRequest;
 use Http;
 
+
+//A service that uses a third party API to verify text doent have and profanities
 class TextModerator
 {
     protected $baseUrl;

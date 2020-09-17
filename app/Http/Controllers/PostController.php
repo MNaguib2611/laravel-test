@@ -8,8 +8,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Requests\PostRequest;
-use App\Services\TextModerator;
-use App\Notifications\PostNotification;
+
+use App\Jobs\ProfanityCheck;
 
 class PostController extends Controller
 {
@@ -20,13 +20,12 @@ class PostController extends Controller
         $posts = PostResource::collection(Post::approvedPosts()->get());       
 
 
-        // TODO: Add posts count to response.
+        //Add posts count to response.
+        // only approved posts & approved comments
        return  response()->json([
             'count' => count($posts), 
             'posts' => PostResource::collection($posts),
        ],200);
-
-
     }
 
 
@@ -35,22 +34,15 @@ class PostController extends Controller
 
     public function store(PostRequest $request): JsonResponse
     {
-     
         //create the (valid) post and attach it to the logged user
-            $post = auth()->user()->posts()->create($request->all());
-            
-            // Perform text moderation, approve/reject the post, send a notification to the user.
-            $textmoderator = new TextModerator();            
-            if($textmoderator->check($post->title.$post->content)){
-                $post->approve();
-                auth()->user()->notify(new PostNotification("your post $post->title was approved"));
-            }else{
-                $post->reject();
-                auth()->user()->notify(new PostNotification("your post $post->title was rejected"));
-            }
-
-
-            return response()->json(['message' => 'Post created Successfully.'], 202);
+        $post = auth()->user()->posts()->create($request->all());
+        
+        // dispatch the post to the Post profanityCheck queue
+        $postCheck = (new ProfanityCheck($post,auth()->user() ));
+        dispatch($postCheck);
+        
+        //return a response that the post was created successfull(this happens without waiting for the check)
+        return response()->json(['message' => 'Post created Successfully.'], 202);
     }
 
 
@@ -59,7 +51,7 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
-        // TODO: Refactor (N+1).
+        //show only approved posts
         if ($post->status == Post::APPROVED) {
             return new PostResource($post);
         }

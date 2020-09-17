@@ -74,7 +74,7 @@ class Comment extends Model
 
 
 
-       
+
     public static function approvedComments()
     {
         return SELF::where("status",SELF::APPROVED);

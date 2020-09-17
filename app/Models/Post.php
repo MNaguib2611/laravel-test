@@ -77,6 +77,10 @@ class Post extends Model
         return SELF::where("status",SELF::APPROVED);
     }
 
+    public  function approvedComments()
+    {
+        return $this->hasMany(Comment::class)->where("status",Comment::APPROVED);
+    }
     
     
 }

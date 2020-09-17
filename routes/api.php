@@ -4,16 +4,18 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\JobController;
+use Carbon\Carbon;
+use App\Jobs\ProfanityCheck;
 
 
-// TODO: Only authenticated users have access.
 
 
 
+//JWT Routes 
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
-
 ], function ($router) {
     Route::post('login', [AuthController::class,'login']);
     Route::post('register', [AuthController::class,'register']);
@@ -23,7 +25,7 @@ Route::group([
 });
 
 
-
+//Only Authenticated Users
 Route::group([
     'middleware' => 'auth:api',
 
@@ -32,10 +34,10 @@ Route::group([
     
     Route::apiResource('posts', PostController::class)->only('index', 'store', 'show');
     Route::apiResource('posts/{post}/comments', CommentController::class)->only('store');
-    Route::get('notifications', NotificationController::class);
+    //api/notifications will only retrieve unread notifications    
+    Route::get('notifications', NotificationController::class)->name("notifications");
 
 });
-
 
 
 

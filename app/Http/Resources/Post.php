@@ -21,7 +21,8 @@ class Post extends JsonResource
             'title'      => $this->title,
             'content'    => $this->content,
             'created_at' =>$this->created_at->diffForHumans(),
-            'comments'   => Comment::collection($this->comments),
+            'comments'   => Comment::collection($this->approvedComments),
+            'comments_count'   => count(Comment::collection($this->approvedComments)),
         ];
     }
 }
