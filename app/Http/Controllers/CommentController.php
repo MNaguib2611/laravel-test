@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Resources\Comment as CommentResource;
 use App\Services\TextModerator;
 use App\Notifications\CommentNotification;
-use App\Jobs\ProfanityCheckComment;
+use App\Jobs\ProfanityCheck;
 
 
 class CommentController extends Controller
@@ -30,7 +30,9 @@ class CommentController extends Controller
         $post = $post->comments()->save($comment);
 
           // dispatch the post to the Comment profanityCheck queue
-        $commentCheck = (new ProfanityCheckComment($comment,auth()->user() ));
+        $commentCheck = (new ProfanityCheck($comment,
+                                          "Comment",  
+                                          auth()->user() ));
         dispatch($commentCheck);
 
       //return a response that the post was created successfull(this happens without waiting for the check)

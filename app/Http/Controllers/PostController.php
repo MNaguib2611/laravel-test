@@ -33,7 +33,9 @@ class PostController extends Controller
         $post = auth()->user()->posts()->create($request->all());
         
         // dispatch the post to the Post profanityCheck queue
-        $postCheck = (new ProfanityCheck($post,auth()->user()));
+        $postCheck = (new ProfanityCheck($post,
+                                        "Post",
+                                        auth()->user()));
         dispatch($postCheck);
         
         //return a response that the post was created successfull(this happens without waiting for the check)

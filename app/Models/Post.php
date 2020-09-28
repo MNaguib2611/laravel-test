@@ -82,17 +82,9 @@ class Post extends Model
     }
 
    
-    // public static function approvedPosts()
-    // {
-    //     return SELF::where("status",SELF::APPROVED);
-    // }
-
-    public  function approvedComments()
-    {
-        return $this->hasMany(Comment::class)->where("status",Comment::APPROVED);
+    public function getFullTextAttribute(){
+        return $this->title." ".$this->content;
     }
-
-
 
 
 

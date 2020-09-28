@@ -28,11 +28,7 @@ class AuthController extends Controller {
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(LoginRequest $request){
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        if (! $token = auth()->attempt($validator->validated())) {
+        if (! $token = auth()->attempt($request->all())) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -45,12 +41,8 @@ class AuthController extends Controller {
      * @return \Illuminate\Http\JsonResponse
      */
     public function register(RegisterRequest $request) {
-        if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
-        }
-
         $user = User::create(array_merge(
-                    $validator->validated(),
+                        $request->all(),
                     ['password' => bcrypt($request->password)]
                 ));
 

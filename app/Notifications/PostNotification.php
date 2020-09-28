@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-//notify the userwhether his/her comment was approved or rejected
+//notify the userwhether his/her post/comment was approved or rejected
 class PostNotification extends Notification
 {
     use Queueable;

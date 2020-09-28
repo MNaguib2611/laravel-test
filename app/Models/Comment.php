@@ -84,4 +84,10 @@ class Comment extends Model
     }
 
 
+
+     //for the profanityChecker
+     public function getFullTextAttribute(){
+       return $this->content;
+    }
+
 }

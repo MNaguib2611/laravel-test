@@ -9,7 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Comment;
 use App\Services\TextModerator;
-use App\Notifications\PostNotification;
+use App\Notifications\StatusNotification;
 use App\Models\User; 
 use App\Models\Post; 
 
@@ -17,16 +17,20 @@ class ProfanityCheck implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $post;
+    protected $obj;
+    protected $type;
     protected $user;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(Post $post,User $user)
+
+     //incase of 
+    public function __construct($obj,String $type,User $user)
     {
-        $this->post  = $post;
+        $this->obj  = $obj;
+        $this->type  = $type;
         $this->user  = $user;
     }
 
@@ -37,13 +41,14 @@ class ProfanityCheck implements ShouldQueue
      */
     public function handle()
     {
-        $textmoderator = new TextModerator();            
-        if($textmoderator->check($this->post->title." ".$this->post->content)){
-            $this->post->approve();
-            $this->user->notify(new PostNotification("your post ".$this->post->title." was approved"));
+        $textmoderator = new TextModerator();    
+        $stringHeader = mb_substr($this->obj->full_text, 0, 10);        
+        if($textmoderator->check($this->obj->full_text)){
+            $this->obj->approve();
+            $this->user->notify(new StatusNotification("your $this->type $stringHeader  was approved"));
         }else{
-            $this->post->reject();
-            $this->user->notify(new PostNotification("your post ".$this->post->title." was rejected"));
+            $this->obj->reject();
+            $this->user->notify(new StatusNotification("your $this->type  $stringHeader  was rejected"));
         }
     }
 }
