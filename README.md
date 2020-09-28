@@ -32,4 +32,9 @@
 
 ### PS:There was no constrains on foreign keys in the migrations so I added them in a seperate migrations files
 
+## update 2
+- used global scope to get approved posts & comments only.(didn't find need to use local scopes).
+- used eager loading (protected $with ) inside Post & Comment Method
+- used Lazy Eager Loading with post show method
+- Avoiding querying unloaded relations in API Resources (using whenLoaded inside the resource)
 

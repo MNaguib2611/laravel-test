@@ -16,15 +16,10 @@ class PostController extends Controller
 
     public function index(): JsonResponse
     {
-        //only approved posts
-        $posts = PostResource::collection(Post::approvedPosts()->get());       
-
-
-        //Add posts count to response.
-        // only approved posts & approved comments
+        //used $with mutator for eager loading of user
        return  response()->json([
-            'count' => count($posts), 
-            'posts' => PostResource::collection($posts),
+            'count' => Post::count(), 
+            'posts' => PostResource::collection(Post::all()), 
        ],200);
     }
 
@@ -38,7 +33,7 @@ class PostController extends Controller
         $post = auth()->user()->posts()->create($request->all());
         
         // dispatch the post to the Post profanityCheck queue
-        $postCheck = (new ProfanityCheck($post,auth()->user() ));
+        $postCheck = (new ProfanityCheck($post,auth()->user()));
         dispatch($postCheck);
         
         //return a response that the post was created successfull(this happens without waiting for the check)
@@ -49,13 +44,9 @@ class PostController extends Controller
 
 
 
-    public function show(Post $post)
+    public function show(Post $post): JsonResource
     {
-        //show only approved posts
-        if ($post->status == Post::APPROVED) {
-            return new PostResource($post);
-        }
-        //incase the post hasn't been approved
-        abort(404, "No query results for model [App\\Models\\Post] ".$post->id);
+        //Lazy Eager Loading
+        return new PostResource($post->load('comments'));
     }
 }

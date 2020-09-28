@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Comment;
 use App\Models\User;
+use App\Scopes\ApprovedScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,6 +25,15 @@ class Post extends Model
     protected $fillable = [
         'user_id', 'title', 'content',
     ];
+    protected $with = ['user'];
+
+
+    //global scope
+    protected static function booted()
+    {
+        static::addGlobalScope(new ApprovedScope);
+    }
+
 
     /**
      * The user who created this post.
@@ -72,15 +82,21 @@ class Post extends Model
     }
 
    
-    public static function approvedPosts()
-    {
-        return SELF::where("status",SELF::APPROVED);
-    }
+    // public static function approvedPosts()
+    // {
+    //     return SELF::where("status",SELF::APPROVED);
+    // }
 
     public  function approvedComments()
     {
         return $this->hasMany(Comment::class)->where("status",Comment::APPROVED);
     }
+
+
+
+
+
+   
     
     
 }

@@ -25,11 +25,6 @@ class CommentController extends Controller
      */
     public function store(CommentRequest $request, Post $post): JsonResponse
     {
-        //if user tried to comment on an unapproved post
-        if ($post->status !== Post::APPROVED) {
-            abort(404, "No query results for model [App\\Models\\Post] ".$post->id);
-        }
-
         //create a comment and attach it to auth user & post
         $comment = auth()->user()->comments()->make($request->all());
         $post = $post->comments()->save($comment);

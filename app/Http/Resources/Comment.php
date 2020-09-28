@@ -17,7 +17,7 @@ class Comment extends JsonResource
         // TODO: Refactor.
         return [
             'id'            => $this->id,
-            'user'          => new User($this->user),
+            'user'          => new User($this->whenLoaded('user')),
             'content'       => $this->content,
             'created_at'    => $this->created_at->diffForHumans(),
 

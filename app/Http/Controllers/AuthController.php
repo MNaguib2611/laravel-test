@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Validator;
 use App\Models\User;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
+
 
 
 class AuthController extends Controller {
@@ -24,12 +27,7 @@ class AuthController extends Controller {
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login(Request $request){
-    	$validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|string|min:6',
-        ]);
-
+    public function login(LoginRequest $request){
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
@@ -46,13 +44,7 @@ class AuthController extends Controller {
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function register(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|between:2,100',
-            'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|confirmed|min:6',
-        ]);
-
+    public function register(RegisterRequest $request) {
         if($validator->fails()){
             return response()->json($validator->errors()->toJson(), 400);
         }
@@ -75,7 +67,7 @@ class AuthController extends Controller {
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout() {
-        auth()->logout();
+        auth()->logout(true);
 
         return response()->json(['message' => 'User successfully signed out']);
     }

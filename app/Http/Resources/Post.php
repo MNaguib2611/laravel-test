@@ -16,13 +16,15 @@ class Post extends JsonResource
     {
         // TODO: Refactor.
         return [
-            'id'         => $this->id,
-            'user'       => $this->user,
-            'title'      => $this->title,
-            'content'    => $this->content,
-            'created_at' =>$this->created_at->diffForHumans(),
-            'comments'   => Comment::collection($this->approvedComments),
-            'comments_count'   => count(Comment::collection($this->approvedComments)),
+            'id'                => $this->id,
+            'user'              => new User($this->whenLoaded('user')),
+            'title'             => $this->title,
+            'content'           => $this->content,
+            'created_at'        =>$this->created_at->diffForHumans(),
+            'comments'          => Comment::collection($this->whenLoaded('comments')),
+            'comments_count'    => $this->whenLoaded('comments', function () {
+                return $this->comments->count();
+            }),    
         ];
     }
 }
