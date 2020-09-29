@@ -16,9 +16,6 @@ use App\Repositories\UserRepository;
 
 class CommentController extends Controller
 {
-
-
-
     protected $users;
 
     public function __construct(UserRepository $users)
@@ -33,13 +30,21 @@ class CommentController extends Controller
         $comment = $this->users->storeComment($request);
         $post = $post->comments()->save($comment);
 
-          // dispatch the post to the Comment profanityCheck queue
-        $commentCheck = (new ProfanityCheck($comment,
-                                          "Comment",  
-                                          auth()->user() ));
-        dispatch($commentCheck);
+
+        // dispatch the post to the Comment profanityCheck queue
+        $this->backgroudCommentValidate($comment);
 
       //return a response that the post was created successfull(this happens without waiting for the check)
         return response()->json(['message' => 'Comment created Successfully.'], 202);
     }
+
+
+
+
+  public function backgroudCommentValidate(Comment $comment){
+      $commentCheck = (new ProfanityCheck($comment,
+                            "Comment",  
+                            auth()->user() ));
+      dispatch($commentCheck);
+  }
 }

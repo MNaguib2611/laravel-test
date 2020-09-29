@@ -45,10 +45,7 @@ class PostController extends Controller
         $post = $this->users->storePost($request);
         
         // dispatch the post to the Post profanityCheck queue
-        $postCheck = (new ProfanityCheck($post,
-                                        "Post",
-                                        auth()->user()));
-        dispatch($postCheck);
+       $this->backgroudPostValidate($post);
         
         //return a response that the post was created successfull(this happens without waiting for the check)
         return response()->json(['message' => 'Post created Successfully.'], 202);
@@ -63,4 +60,16 @@ class PostController extends Controller
         //Lazy Eager Loading
         return new PostResource($post->load('comments'));
     }
+
+
+
+    public function backgroudPostValidate(Post $post){
+        $postCheck = (new ProfanityCheck($post,
+                            "Post",
+                            auth()->user()));
+        dispatch($postCheck);
+    }
+
+
+
 }

@@ -17,11 +17,11 @@ class TextModerator
     public function __construct()
     {
         $this->baseUrl   = "https://api.sightengine.com/1.0/text/check.json";
-        $this->apiUser   =  env('SIGHT_ENGINE_API_USER',null);
-        $this->apiSecret = env('SIGHT_ENGINE_API_SECRET',null);
+        $this->apiUser   = config('services.sightengine.api_user');
+        $this->apiSecret = config('services.sightengine.api_secret');
     }
 
-
+    
     public function check(string $text): bool
     {
         $response = Http::asForm()->post($this->baseUrl, $this->data($text));
