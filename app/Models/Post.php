@@ -23,7 +23,7 @@ class Post extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'title', 'content',
+        'user_id', 'title', 'content','status'
     ];
     protected $with = ['user'];
 
@@ -81,7 +81,14 @@ class Post extends Model
         return $this;
     }
 
+
+    public function getPostStatusAttribute()
+    {
+        return "this->status";
+    }
    
+
+    //for the profanityChecker
     public function getFullTextAttribute(){
         return $this->title." ".$this->content;
     }

@@ -4,18 +4,26 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Repositories\UserRepository;
+
 
 class NotificationController extends Controller
 {
-    /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
+    
+
+    protected $users;
+
+    public function __construct(UserRepository $users)
+    {
+        $this->users = $users;
+    }
+
+
+
+
     public function __invoke(Request $request): JsonResponse
     {
-        $notificataions = auth()->user()->unreadNotifications()->pluck('data');
+        $notificataions = $this->users->sendNotifications();
 
         return response()->json(['data' => $notificataions]);
     }

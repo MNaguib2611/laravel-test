@@ -8,11 +8,24 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Requests\PostRequest;
-
 use App\Jobs\ProfanityCheck;
+use App\Repositories\UserRepository;
 
 class PostController extends Controller
 {
+
+
+
+    protected $users;
+
+    public function __construct(UserRepository $users)
+    {
+        $this->users = $users;
+    }
+
+
+
+
 
     public function index(): JsonResponse
     {
@@ -26,11 +39,10 @@ class PostController extends Controller
 
 
 
-
     public function store(PostRequest $request): JsonResponse
     {
-        //create the (valid) post and attach it to the logged user
-        $post = auth()->user()->posts()->create($request->all());
+        //create the post
+        $post = $this->users->storePost($request);
         
         // dispatch the post to the Post profanityCheck queue
         $postCheck = (new ProfanityCheck($post,

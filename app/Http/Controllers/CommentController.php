@@ -12,21 +12,25 @@ use App\Http\Resources\Comment as CommentResource;
 use App\Services\TextModerator;
 use App\Notifications\CommentNotification;
 use App\Jobs\ProfanityCheck;
-
+use App\Repositories\UserRepository;
 
 class CommentController extends Controller
 {
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\JsonResponse
-     */
+
+
+
+    protected $users;
+
+    public function __construct(UserRepository $users)
+    {
+        $this->users = $users;
+    }
+
+
     public function store(CommentRequest $request, Post $post): JsonResponse
     {
         //create a comment and attach it to auth user & post
-        $comment = auth()->user()->comments()->make($request->all());
+        $comment = $this->users->storeComment($request);
         $post = $post->comments()->save($comment);
 
           // dispatch the post to the Comment profanityCheck queue

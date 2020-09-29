@@ -37,4 +37,4 @@
 - used eager loading (protected $with ) inside Post & Comment Method
 - used Lazy Eager Loading with post show method
 - Avoiding querying unloaded relations in API Resources (using whenLoaded inside the resource)
-
+- not sure what was wrong with testing (so I removed unwanted test cases) tests are in /tests/feature/PostTests.php

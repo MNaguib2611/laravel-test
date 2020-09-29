@@ -12,16 +12,15 @@ class TextModerator
     protected $baseUrl;
     protected $apiUser;
     protected $apiSecret;
-    //   ATTENTION
-    //I changed the constructor since $baseUrl -> this is constant //"https://api.sightengine.com/1.0/text/check.json"
-    //                                $apiUser -> this is constant  from app environment
-    //                                $apiSecret -> this is constant  from app environment
+   
+    
     public function __construct()
     {
         $this->baseUrl   = "https://api.sightengine.com/1.0/text/check.json";
         $this->apiUser   =  env('SIGHT_ENGINE_API_USER',null);
         $this->apiSecret = env('SIGHT_ENGINE_API_SECRET',null);
     }
+
 
     public function check(string $text): bool
     {
@@ -35,6 +34,10 @@ class TextModerator
 
         throw new UnsuccessfulTextModerationRequest($body['error']['message']);
     }
+
+
+
+
 
     private function data(string $text): array
     {
