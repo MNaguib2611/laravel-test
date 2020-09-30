@@ -5,23 +5,19 @@ namespace App\Services;
 use App\Exceptions\UnsuccessfulTextModerationRequest;
 use Http;
 
-
-//A service that uses a third party API to verify text doent have and profanities
 class TextModerator
 {
     protected $baseUrl;
     protected $apiUser;
     protected $apiSecret;
-   
-    
-    public function __construct()
+
+    public function __construct(string $baseUrl, string $apiUser, string $apiSecret)
     {
-        $this->baseUrl   = "https://api.sightengine.com/1.0/text/check.json";
-        $this->apiUser   = config('services.sightengine.api_user');
-        $this->apiSecret = config('services.sightengine.api_secret');
+        $this->baseUrl = $baseUrl;
+        $this->apiUser = $apiUser;
+        $this->apiSecret = $apiSecret;
     }
 
-    
     public function check(string $text): bool
     {
         $response = Http::asForm()->post($this->baseUrl, $this->data($text));
@@ -34,10 +30,6 @@ class TextModerator
 
         throw new UnsuccessfulTextModerationRequest($body['error']['message']);
     }
-
-
-
-
 
     private function data(string $text): array
     {

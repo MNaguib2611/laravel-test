@@ -41,7 +41,8 @@ class ProfanityCheck implements ShouldQueue
      */
     public function handle()
     {
-        $textmoderator = new TextModerator();    
+        //using primitve binding to inject data to the TextModerator class  
+        $textmoderator = app(TextModerator::class);    
         $stringHeader = mb_substr($this->obj->full_text, 0, 10);        
         if($textmoderator->check($this->obj->full_text)){
             $this->obj->approve();

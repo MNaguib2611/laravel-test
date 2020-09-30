@@ -38,3 +38,4 @@
 - used Lazy Eager Loading with post show method
 - Avoiding querying unloaded relations in API Resources (using whenLoaded inside the resource)
 - removed unwanted test cases ,, tests are in /tests/unit/PostTests.php
+- used AppServiceProvider to inject ($baseUrl,$apiUser ,$apiSecret) into textModerator constructor

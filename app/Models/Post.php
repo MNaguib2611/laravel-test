@@ -35,6 +35,7 @@ class Post extends Model
     }
 
 
+
     /**
      * The user who created this post.
      *
