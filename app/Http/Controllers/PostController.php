@@ -8,8 +8,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Requests\PostRequest;
-use App\Jobs\ProfanityCheck;
 use App\Repositories\UserRepository;
+use App\Repositories\PostRepository;
+
 
 class PostController extends Controller
 {
@@ -17,10 +18,13 @@ class PostController extends Controller
 
 
     protected $users;
+    protected $posts;
 
-    public function __construct(UserRepository $users)
+
+    public function __construct(UserRepository $users,PostRepository $posts)
     {
         $this->users = $users;
+        $this->posts = $posts;
     }
 
 
@@ -29,11 +33,8 @@ class PostController extends Controller
 
     public function index(): JsonResponse
     {
-        //used $with mutator for eager loading of user
-       return  response()->json([
-            'count' => Post::count(), 
-            'posts' => PostResource::collection(Post::all()), 
-       ],200);
+        //using UserRepository all() method
+       return  response()->json($this->posts->all() ,200);
     }
 
 
@@ -44,8 +45,8 @@ class PostController extends Controller
         //create the post
         $post = $this->users->storePost($request);
         
-        // dispatch the post to the Post profanityCheck queue
-       $this->backgroudPostValidate($post);
+        // using  UserRepository to dispatch the post to the Post profanityCheck queue
+       $this->posts->validatePost($post);
         
         //return a response that the post was created successfull(this happens without waiting for the check)
         return response()->json(['message' => 'Post created Successfully.'], 202);
@@ -63,12 +64,7 @@ class PostController extends Controller
 
 
 
-    public function backgroudPostValidate(Post $post){
-        $postCheck = (new ProfanityCheck($post,
-                            "Post",
-                            auth()->user()));
-        dispatch($postCheck);
-    }
+  
 
 
 

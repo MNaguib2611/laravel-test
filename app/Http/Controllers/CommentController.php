@@ -13,14 +13,21 @@ use App\Services\TextModerator;
 use App\Notifications\CommentNotification;
 use App\Jobs\ProfanityCheck;
 use App\Repositories\UserRepository;
+use App\Repositories\CommentRepository;
+
+
 
 class CommentController extends Controller
 {
     protected $users;
+    protected $comments;
 
-    public function __construct(UserRepository $users)
+
+    public function __construct(UserRepository $users,CommentRepository $comments)
     {
         $this->users = $users;
+        $this->comments = $comments;
+
     }
 
 
@@ -32,7 +39,7 @@ class CommentController extends Controller
 
 
         // dispatch the post to the Comment profanityCheck queue
-        $this->backgroudCommentValidate($comment);
+        $this->comments->validateComment($comment);
 
       //return a response that the post was created successfull(this happens without waiting for the check)
         return response()->json(['message' => 'Comment created Successfully.'], 202);
@@ -41,10 +48,5 @@ class CommentController extends Controller
 
 
 
-  public function backgroudCommentValidate(Comment $comment){
-      $commentCheck = (new ProfanityCheck($comment,
-                            "Comment",  
-                            auth()->user() ));
-      dispatch($commentCheck);
-  }
+
 }
