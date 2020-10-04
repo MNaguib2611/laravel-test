@@ -56,10 +56,9 @@ class PostController extends Controller
 
 
 
-    public function show(Post $post): JsonResource
+    public function show($id): JsonResource
     {
-        //Lazy Eager Loading
-        return new PostResource($post->load('comments'));
+        return $this->posts->fetchById($id);
     }
 
 

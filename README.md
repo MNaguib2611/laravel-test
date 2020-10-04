@@ -39,3 +39,4 @@
 - Avoiding querying unloaded relations in API Resources (using whenLoaded inside the resource)
 - removed unwanted test cases ,, tests are in /tests/unit/PostTests.php
 - used AppServiceProvider to inject ($baseUrl,$apiUser ,$apiSecret) into textModerator constructor
+- used loadCount to load the count of the comments

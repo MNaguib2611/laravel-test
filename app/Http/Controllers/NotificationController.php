@@ -23,7 +23,7 @@ class NotificationController extends Controller
 
     public function __invoke(Request $request): JsonResponse
     {
-        $notificataions = $this->users->sendNotifications();
+        $notificataions = $this->users->fetchNotifications();
 
         return response()->json(['data' => $notificataions]);
     }

@@ -15,12 +15,12 @@ class UserRepository{
   }
   
 
-  public function storeComment(Request $request){
+  public function makeComment(Request $request){
     return  auth()->user()->comments()->make($request->all());
   }
   
 
-  public function sendNotifications(){
+  public function fetchNotifications(){
     return auth()->user()->unreadNotifications()->pluck('data');
   }
   

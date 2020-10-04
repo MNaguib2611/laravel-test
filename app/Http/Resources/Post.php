@@ -22,9 +22,7 @@ class Post extends JsonResource
             'content'           => $this->content,
             'created_at'        =>$this->created_at->diffForHumans(),
             'comments'          => Comment::collection($this->whenLoaded('comments')),
-            'comments_count'    => $this->whenLoaded('comments', function () {
-                return $this->comments->count();
-            }),    
+            'comments_count'    => $this->whenLoaded('comments', $this->comments_count),    
         ];
     }
 }

@@ -34,7 +34,7 @@ class CommentController extends Controller
     public function store(CommentRequest $request, Post $post): JsonResponse
     {
         //create a comment and attach it to auth user & post
-        $comment = $this->users->storeComment($request);
+        $comment = $this->users->makeComment($request);
         $post = $post->comments()->save($comment);
 
 

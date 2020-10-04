@@ -11,19 +11,32 @@ use App\Jobs\ProfanityCheck;
 
 
 class PostRepository{
-  public function all(){
+
+  public function all()
+  {
     return  [
       'count' => Post::count(), 
       'posts' => PostResource::collection(Post::all()), 
     ];
   }
 
-  public function validatePost(Post $post){
+
+
+  public function fetchById($id)
+  {
+    $post = Post::findOrFail($id);
+    // Lazy Eager Loading
+    return new PostResource($post->load('comments')->loadCount('comments'));
+  }
+ 
+
+  public function validatePost(Post $post)
+  {
     $postCheck = (new ProfanityCheck($post,
                         "Post",
                         auth()->user()));
     dispatch($postCheck);
-}
+  }
   
 
   
